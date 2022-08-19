@@ -18,24 +18,40 @@ namespace Catalog2.Controllers
         [HttpGet("GetAll")]
         public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> Get()
         {
-            return  Ok(await taskService.GetAllItems());
+            return  Ok(await taskService.GetAllTasks());
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetTaskDto>>> GetSingle(int id)
         {
-            return Ok(await taskService.GetItemById(id));
+            return Ok(await taskService.GetTaskById(id));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> Delete(int id)
+        {
+            var response = await taskService.DeleteTask(id);
+            if(response.Data == null) 
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> AddItem(AddTaskDto newTask)
+        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> AddTask(AddTaskDto newTask)
         {
-            return Ok(await taskService.AddItem(newTask));
+            return Ok(await taskService.AddTask(newTask));
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> UpdateItem(UpdateTaskDto updatedTask)
+        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> UpdateTask(UpdateTaskDto updatedTask)
         {
-            return Ok(await taskService.UpdateItem(updatedTask));
+            var response = await taskService.UpdateTask(updatedTask);
+            if(response.Data == null) 
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
     }
 }
