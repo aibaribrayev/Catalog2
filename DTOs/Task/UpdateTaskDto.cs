@@ -1,7 +1,8 @@
 namespace Catalog2.DTOs.Task
 {
-    public class AddTaskDto
+    public class UpdateTaskDto
     {
+        public int Id {get; set;}
         public string Name {get; set;} = "";
         public int Priority {get; set;}
         public string Description {get; set;} = "none";

@@ -38,5 +38,18 @@ namespace Catalog2.Services.TaskService
             serviceResponse.Data = mapper.Map<GetTaskDto>(task);
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<GetTaskDto>> UpdateItem(UpdateTaskDto updatedTask)
+        {
+            ServiceResponse<GetTaskDto> response = new ServiceResponse<GetTaskDto>();
+            TaskItem task = Tasks.FirstOrDefault(t => t.Id == updatedTask.Id);
+            var serviceResponse = new ServiceResponse<GetTaskDto>();
+            task.Name = updatedTask.Name; 
+            task.Description = updatedTask.Description; 
+            task.Class = updatedTask.Class;
+            task.Priority = task.Priority;  
+            serviceResponse.Data = mapper.Map<GetTaskDto>(task);
+            return response;
+        }
     }
-}
+} 

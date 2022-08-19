@@ -31,5 +31,11 @@ namespace Catalog2.Controllers
         {
             return Ok(await taskService.AddItem(newTask));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> UpdateItem(UpdateTaskDto updatedTask)
+        {
+            return Ok(await taskService.UpdateItem(updatedTask));
+        }
     }
 }
