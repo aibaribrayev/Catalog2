@@ -15,7 +15,7 @@ namespace Catalog2.Controllers
             this.taskService = taskService;
         }
         
-        [HttpGet("GetAll")]
+        [HttpGet("GetTasksInProject{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> Get()
         {
             return  Ok(await taskService.GetAllTasks());

@@ -1,20 +1,19 @@
 using AutoMapper;
+using Catalog2.Data;
 using Catalog2.DTOs.Task;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog2.Services.TaskService
 {
     public class TaskService : ITaskService
     {
-
-         private static List<TaskItem> tasks = new List<TaskItem>(){
-            new TaskItem(),
-            new TaskItem {Id = 1, Name = "Task1"}
-        };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public TaskService(IMapper mapper)
+        public TaskService(IMapper mapper, DataContext context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
 
@@ -22,9 +21,11 @@ namespace Catalog2.Services.TaskService
         {
              var serviceResponse = new ServiceResponse<List<GetTaskDto>>();
              TaskItem task = _mapper.Map<TaskItem>(newTask); 
-             task.Id = tasks.Max(t => t.Id) + 1; 
-             tasks.Add(task); 
-             serviceResponse.Data = tasks.Select(t => _mapper.Map<GetTaskDto>(t)).ToList(); 
+             _context.Tasks.Add(task); 
+             await _context.SaveChangesAsync(); 
+             serviceResponse.Data = await _context.Tasks
+                .Select(t => _mapper.Map<GetTaskDto>(t))
+                .ToListAsync(); 
              return serviceResponse; 
         }
 
@@ -33,9 +34,11 @@ namespace Catalog2.Services.TaskService
             ServiceResponse<List<GetTaskDto>> response = new ServiceResponse<List<GetTaskDto>>();
 
             try{
-                TaskItem task = tasks.First(t => t.Id == id);
-                tasks.Remove(task); 
-                response.Data = tasks.Select(t => _mapper.Map<GetTaskDto>(t)).ToList();
+                TaskItem task = _context.Tasks.First(t => t.Id == id);
+                _context.Tasks.Remove(task); 
+                await _context.SaveChangesAsync();
+                
+                response.Data = _context.Tasks.Select(t => _mapper.Map<GetTaskDto>(t)).ToList();
             } catch(Exception ex) { 
                 response.Success = false; 
                 response.Message = ex.Message; 
@@ -45,14 +48,17 @@ namespace Catalog2.Services.TaskService
 
         public async Task<ServiceResponse<List<GetTaskDto>>> GetAllTasks()
         {
-            return new ServiceResponse<List<GetTaskDto>>{Data = tasks.Select(t => _mapper.Map<GetTaskDto>(t)).ToList()};
+            var response = new ServiceResponse<List<GetTaskDto>>(); 
+            var dbTasks = await _context.Tasks.ToListAsync(); 
+            response.Data = dbTasks.Select(t => _mapper.Map<GetTaskDto>(t)).ToList(); 
+            return response;
         }
 
         public async Task<ServiceResponse<GetTaskDto>> GetTaskById(int id)
         {
             var serviceResponse = new ServiceResponse<GetTaskDto>();
-            var task = tasks.FirstOrDefault (t => t.Id == id);
-            serviceResponse.Data = _mapper.Map<GetTaskDto>(task);
+            var dbTask = await _context.Tasks.FirstOrDefaultAsync (t => t.Id == id);
+            serviceResponse.Data = _mapper.Map<GetTaskDto>(dbTask);
             return serviceResponse;
         }
 
@@ -61,13 +67,16 @@ namespace Catalog2.Services.TaskService
             ServiceResponse<GetTaskDto> response = new ServiceResponse<GetTaskDto>();
 
             try{
-                TaskItem task = tasks.FirstOrDefault(t => t.Id == updatedTask.Id);
+                var task = await _context.Tasks
+                .FirstOrDefaultAsync(t => t.Id == updatedTask.Id);
 
                 // _mapper.Map(updatedTask, task); 
                 task.Name = updatedTask.Name; 
                 task.Description = updatedTask.Description; 
                 task.Class = updatedTask.Class;
                 task.Priority = task.Priority;
+
+                await _context.SaveChangesAsync(); 
 
                 response.Data = _mapper.Map<GetTaskDto>(task);  
             } catch(Exception ex) { 
