@@ -9,7 +9,7 @@ namespace Catalog2
         { 
             CreateMap<TaskItem, GetTaskDto>(); 
             CreateMap<AddTaskDto, TaskItem>(); 
-            CreateMap<UpdateTaskDto, Task>();  
+            // CreateMap<UpdateTaskDto, Task>();  
         }
 
         

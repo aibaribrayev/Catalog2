@@ -7,6 +7,5 @@ namespace Catalog2.Models
         public int Priority {get; set;}
         public string Description {get; set;} = "none";
         public Status Class {get; set;} = Status.ToDo;
-        public List<Subtask> Subtaks { get; set; }
     }
 }
