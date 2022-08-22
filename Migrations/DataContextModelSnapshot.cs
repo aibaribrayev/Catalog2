@@ -23,14 +23,20 @@ namespace Catalog2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Priority")
+                    b.Property<int?>("Priority")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Status")
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -44,26 +50,29 @@ namespace Catalog2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Class")
+                    b.Property<int?>("Class")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("CustomField")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("InProjectId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Priority")
+                    b.Property<int?>("Priority")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("projectId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InProjectId");
+                    b.HasIndex("projectId");
 
                     b.ToTable("Tasks");
                 });
@@ -72,7 +81,9 @@ namespace Catalog2.Migrations
                 {
                     b.HasOne("Catalog2.Models.Project", "InProject")
                         .WithMany("Tasks")
-                        .HasForeignKey("InProjectId");
+                        .HasForeignKey("projectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("InProject");
                 });

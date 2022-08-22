@@ -8,11 +8,12 @@ namespace Catalog2
     {
         public AutoMapperProfile()
         { 
+            //maps for converting between DTOs and Models 
             CreateMap<TaskItem, GetTaskDto>(); 
             CreateMap<AddTaskDto, TaskItem>();
             CreateMap<Project, GetProjectDto>();
-             CreateMap<AddProjectDto, Project>();
-            // CreateMap<UpdateTaskDto, Task>();  
+            CreateMap<AddProjectDto, Project>();
+            // CreateMap<UpdateTaskDto, TaskItem>();  
         }
 
         

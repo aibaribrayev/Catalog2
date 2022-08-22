@@ -15,10 +15,10 @@ namespace Catalog2.Controllers
             this.taskService = taskService;
         }
         
-        [HttpGet("GetTasksInProject{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> Get()
+        [HttpGet("GetAllTasksInProject{projectId}")]
+        public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> Get(int projectId)
         {
-            return  Ok(await taskService.GetAllTasks());
+            return  Ok(await taskService.GetAllTasks(projectId));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetTaskDto>>> GetSingle(int id)
@@ -40,7 +40,12 @@ namespace Catalog2.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<List<GetTaskDto>>>> AddTask(AddTaskDto newTask)
         {
-            return Ok(await taskService.AddTask(newTask));
+            var response = await taskService.AddTask(newTask);
+            if(response.Data == null) 
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpPut]
